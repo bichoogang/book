@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import { getAuth ,onAuthStateChanged} from "firebase/auth";
+import React, { useEffect, useState } from "react";
+import PrivateRoutes from './privateRoutes/index.js'
+import PublicRoutes from './publicRoutes'
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const auth = getAuth()
+  const user = auth.currentUser
+  console.log('userr', user)
+  const [ckuser,setckuser] = useState()
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+        console.log('lll', user)
+        if(user?.emailVerified){
+            setckuser(true)
+            // dispatch(loadNormalUser(user?.uid))
+        }else{
+            setckuser(false)
+            console.log('nouser')
+        }
+
+    })
+
+}, [])
+const isUserLoggedIn = ckuser;
+  return isUserLoggedIn?<PrivateRoutes/>:<PublicRoutes/>
 }
 
 export default App;
